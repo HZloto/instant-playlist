@@ -62,4 +62,4 @@ class Scrapper:
         return similar_artists
 
 my_scrapper = Scrapper() 
-print(my_scrapper.get_similar_artists("mozart"))
+print(my_scrapper.get_similar_artists("purple disco machine"))
