@@ -18,30 +18,43 @@ scrapper_output = ['Purple Disco Machine', 'Claptone', 'Tensnake', 'Bellaire',
 
 #2. Define the credentials to get access tokens to Spotify API
 
-### Define client id and client secret
-client_id = 'e665d5d853914ec2a5fa7a45fcf41b8c'
-client_secret = 'd34be89a80fa48c6b015f86b621514e3'
+def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be89a80fa48c6b015f86b621514e3'):
+    """
+    Function that accesses the various endpoints of the Spotify API by passing an access token from client credentials.
+    
+    Param:
+    -----
+    - client_id: a string containining id to access app created in Spotify for Developers
+    - client_secret: a string containing secret to access app created in Spotify for Developers
 
-### Access the various endpoints of the Spotify API by passing an access token
+    Output:
+    ------
+    - headers
+    """ 
+    
+    import requests
 
-import requests
+    # URL for token resource
+    auth_url = 'https://accounts.spotify.com/api/token'
 
-# URL for token resource
-auth_url = 'https://accounts.spotify.com/api/token'
+    # Request body
+    params = {'grant_type': 'client_credentials',
+              'client_id': client_id,
+              'client_secret': client_secret}
 
-# Request body
-params = {'grant_type': 'client_credentials',
-          'client_id': client_id,
-          'client_secret': client_secret}
+    # POST the request
+    auth_response = requests.post(auth_url, params).json()
 
-# POST the request
-auth_response = requests.post(auth_url, params).json()
+    # Retrieve the access token
+    access_token = auth_response['access_token']
 
-# Retrieve the access token
-access_token = auth_response['access_token']
+    # Save the header in a new variable so you can use it later on
+    headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
+    
+    return headers
 
-# Save the header in a new variable so you can use it later on
-headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
+# Save the header in a new variable so you can use it in functions below
+headers = api_fetch(client_id, client_secret)
 
 #3. Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
 
