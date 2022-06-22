@@ -3,6 +3,7 @@
 # - Output: vector/list/array with all the song’s features
 # MARTIN
 import requests
+import pandas as pd
 
 class connection():
     def __init__(self) -> None:
@@ -10,27 +11,75 @@ class connection():
         self.__client_secret = "e034edd0be29447e90914e512e359625"
 
     def get_auth(self):
-        
+        auth_url = 'https://accounts.spotify.com/api/token'
+        params = {'grant_type': 'client_credentials', 'client_id': self.__client_id,
+                  'client_secret': self.__client_secret}
 
-inp = input('Type your song')
+        auth_response = requests.post(auth_url, params).json()
+        access_token = auth_response["access_token"]
+        headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
+        return headers
 
-# URL for token resource
-auth_url = 'https://accounts.spotify.com/api/token'
 
-# request body
-params = {'grant_type': 'client_credentials',
-          'client_id': client_id,
-          'client_secret': client_secret}
+def get_artist_top_track(artist_name):
 
-# POST the request
-auth_response = requests.post(auth_url, params).json()
+    #Create the connection to spotify API Based on the customer input
+    connect_instance = connection()
+    headers = connect_instance.get_auth()
+
+    #defining params and endpoint
+    url = 'https://api.spotify.com/v1/search?'
+    params = {'q':artist_name, 'type':'artist'}
+
+    #Call the API to get the Artist ID first
+    artist_id = str(requests.get(url, headers=headers, params=params).json()['artists'][
+        'items'][0]['id'])
+
+    #Make another call to the api with the artist ID to Artist top track
+
+    #We define the url of the API and the params to be passed
+    url2 = 'https://api.spotify.com/v1/artists/' + artist_id + "/top-tracks"
+    params2 = {'id': artist_id, 'market':'ES'}
+
+    #Make the API call and store two results, top_track and top_traci_id
+    top_track_json = requests.get(url2, headers = headers, params =params2).json()
+    top_track = top_track_json['tracks'][0]['name']
+    top_track_id = top_track_json['tracks'][0]['id']
+    return top_track, top_track_id
+
+def top_track_df():
+    # We need the input from the user
+    artist_name = input('Write down your favorite artist')
+
+    top_track, top_track_id = get_artist_top_track(artist_name)
+
+    # REquest tokens to connect to API
+    connect_instance = connection()
+    headers = connect_instance.get_auth()
+
+    #Prepare for API:
+    url = 'https://api.spotify.com/v1/audio-features/' + top_track_id
+    params = {"id": top_track_id}
+
+    #Call API
+    features_json = requests.get(url, headers=headers, params=params).json()
+
+    #Create Dataframe with song features
+    df = pd.DataFrame(features_json, index = [0])
+    df['artist_name'] = artist_name
+    df['track_name'] = top_track
+    return df
+
 
 # 1. Create a function that takes as an input the name of one artist
 # (We only ask for artist name for simplicity)
-test_artist = "Bad Bunny"
 
 # 2. Make a spotify API call (SpotiPy can help) to get the artist's most popular song
 
 # 3.return artist name as a string and best song as a df with the following features:
 # ['danceability', 'energy', 'loudness', 'mode', 'speechiness',
 #   'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
+if __name__ == "__main__":
+
+    a = top_track_df()
+    a
