@@ -128,6 +128,9 @@ def top_n_tracks(n=5):
 ## 4 ## Create a df with these columns: song id, title, artist, and all features (['danceability', 'energy', 'loudness', 'mode', 'speechiness',
 #      'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) 
 #       The df should contain about 245 songs (49 artistsx5)
+
+# Importing pandas library
+import pandas as pd 
     
 def create_database(track_features=top_n_tracks()):
     """
@@ -146,9 +149,6 @@ def create_database(track_features=top_n_tracks()):
     track_ids, track_titles, artist_names, \
     danceability, energy, loudness, mode, speechiness, acousticness, \
     instrumentalness, liveness, valence, tempo = track_features
-    
-    # Importing pandas library
-    import pandas as pd 
 
     # Dictionary of lists 
     track_dict = {'id': track_ids, 'title': track_titles, 'artist': artist_names, 
