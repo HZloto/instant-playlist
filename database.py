@@ -130,7 +130,19 @@ def top_n_tracks(n=5):
 #       The df should contain about 245 songs (49 artistsx5)
     
 def create_database(track_features=top_n_tracks()):
+    """
+    Function that gets the features of the tracks in list form and returns a named dataframe.
 
+    Param:
+    -----
+    - track_features: function or lists. All the features of a track that will be used in the recommender system.    
+
+    Output:
+    ------
+    - df
+    """
+
+    # Get the track features
     track_ids, track_titles, artist_names, \
     danceability, energy, loudness, mode, speechiness, acousticness, \
     instrumentalness, liveness, valence, tempo = track_features
