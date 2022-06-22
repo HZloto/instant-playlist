@@ -4,7 +4,7 @@
 # CHRIS
 
 #1. Start with the output of the scrapper.py (a list of 49 artists)
-## Here is an example of the scrapper output so you can work on it before it's ready
+
 scrapper_output = ['Purple Disco Machine', 'Claptone', 'Tensnake', 'Bellaire', 
                    'Tiger And Woods', 'Teenage Mutants', 'Crazy P', 'Drop Out Orchestra', 'Luke Solomon', 
                    'Hot Toddy', 'Art Of Tones', 'Teensnake', 'Horse Meat Disco', 'Made To Move', 
@@ -16,7 +16,7 @@ scrapper_output = ['Purple Disco Machine', 'Claptone', 'Tensnake', 'Bellaire',
                    'The Cube Guys', 'Soundstream', 'Rockers Revenge', 'Fatnotronic', 'Mousse T', 
                    'Sonny Fodera']
 
-#2. Define the credentials to get access tokens to Spotify API
+#2. Define function to get access tokens to Spotify API using credentials
 
 def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be89a80fa48c6b015f86b621514e3'):
     """
@@ -58,15 +58,23 @@ headers = api_fetch(client_id, client_secret)
 
 #3. Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
 
+
+
 #4. Create a df with these columns: song id, title, artist, and all features (['danceability', 'energy', 'loudness', 'mode', 'speechiness',
 #   'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) 
 # The df should contain about 245 songs (49 artistsx5)
 
-def top_n_database(n=5):
+def top_n_tracks(n=5):
     """
-    Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py.
-    Parameters:
-    - n: int. Any number between 1 and 10. Default value is 5.
+    Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py and the corresponding titles.
+
+    Param:
+    -----
+    - n: int. Any integer between 1 and 10. Default value is 5.    
+
+    Output:
+    ------
+    - track_ids, track_titles, artist_names
     """
 
     ### Get above artists' IDs to be able to get tracks of each artist
@@ -89,6 +97,22 @@ def top_n_database(n=5):
             track_ids.append(track_info[i]['id'])
             track_titles.append(track_info[i]['name'])
             artist_names.append(track_info[i]['artists'][0]['name'])
+
+    return track_ids, track_titles, artist_names
+
+
+def audio_features(track_ids):
+    """
+    Function that scraps the API of Spotify to get the audio features of the top N tracks.
+
+    Param:
+    -----
+    - track_ids: list. List of all track ids from the artists' top N.    
+
+    Output:
+    ------
+    - danceability, energy, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
+    """
 
     ### Get all other features of each track
 
