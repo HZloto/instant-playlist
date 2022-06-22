@@ -3,7 +3,7 @@
 # - Output: pandas df or array with songs and their Spotify features
 # CHRIS
 
-#1. Start with the output of the scrapper.py (a list of 49 artists)
+## 1 ## Start with the output of the scrapper.py (a list of 49 artists)
 
 scrapper_output = ['Purple Disco Machine', 'Claptone', 'Tensnake', 'Bellaire', 
                    'Tiger And Woods', 'Teenage Mutants', 'Crazy P', 'Drop Out Orchestra', 'Luke Solomon', 
@@ -16,7 +16,9 @@ scrapper_output = ['Purple Disco Machine', 'Claptone', 'Tensnake', 'Bellaire',
                    'The Cube Guys', 'Soundstream', 'Rockers Revenge', 'Fatnotronic', 'Mousse T', 
                    'Sonny Fodera']
 
-#2. Define function to get access tokens to Spotify API using credentials
+## 2 ## Define function to get access tokens to Spotify API using credentials
+
+import requests
 
 def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be89a80fa48c6b015f86b621514e3'):
     """
@@ -31,8 +33,6 @@ def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be
     ------
     - headers
     """ 
-    
-    import requests
 
     # URL for token resource
     auth_url = 'https://accounts.spotify.com/api/token'
@@ -53,20 +53,14 @@ def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be
     
     return headers
 
-# Save the header in a new variable so you can use it in functions below
-headers = api_fetch(client_id, client_secret)
+# Call the function to save the header in a new variable
+headers = api_fetch()
 
-#3. Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
-
-
-
-#4. Create a df with these columns: song id, title, artist, and all features (['danceability', 'energy', 'loudness', 'mode', 'speechiness',
-#   'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) 
-# The df should contain about 245 songs (49 artistsx5)
+## 3 ## Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
 
 def top_n_tracks(n=5):
     """
-    Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py and the corresponding titles.
+    Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py and the corresponding features.
 
     Param:
     -----
@@ -75,6 +69,7 @@ def top_n_tracks(n=5):
     Output:
     ------
     - track_ids, track_titles, artist_names
+    - danceability, energy, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
     """
 
     ### Get above artists' IDs to be able to get tracks of each artist
@@ -83,9 +78,7 @@ def top_n_tracks(n=5):
     base_url = 'https://api.spotify.com/v1/'
 
     # Initialize track id list
-    track_ids = []
-    track_titles = []
-    artist_names = []
+    track_ids, track_titles, artist_names = ([] for i in range(3))
 
     # Create loop to get artist id and then get the top n tracks of the corresponding artist
     for artist_name in scrapper_output:
@@ -97,22 +90,6 @@ def top_n_tracks(n=5):
             track_ids.append(track_info[i]['id'])
             track_titles.append(track_info[i]['name'])
             artist_names.append(track_info[i]['artists'][0]['name'])
-
-    return track_ids, track_titles, artist_names
-
-
-def audio_features(track_ids):
-    """
-    Function that scraps the API of Spotify to get the audio features of the top N tracks.
-
-    Param:
-    -----
-    - track_ids: list. List of all track ids from the artists' top N.    
-
-    Output:
-    ------
-    - danceability, energy, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
-    """
 
     ### Get all other features of each track
 
@@ -143,6 +120,20 @@ def audio_features(track_ids):
         liveness.append(track_info_features['liveness'])
         valence.append(track_info_features['valence'])
         tempo.append(track_info_features['tempo'])
+
+    return track_ids, track_titles, artist_names, \
+           danceability, energy, loudness, mode, speechiness, acousticness, \
+           instrumentalness, liveness, valence, tempo
+
+## 4 ## Create a df with these columns: song id, title, artist, and all features (['danceability', 'energy', 'loudness', 'mode', 'speechiness',
+#      'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) 
+#       The df should contain about 245 songs (49 artistsx5)
+    
+def create_database(track_features=top_n_tracks()):
+
+    track_ids, track_titles, artist_names, \
+    danceability, energy, loudness, mode, speechiness, acousticness, \
+    instrumentalness, liveness, valence, tempo = track_features
     
     # Importing pandas library
     import pandas as pd 
@@ -160,4 +151,4 @@ def audio_features(track_ids):
     return df 
 
 ### Return the dataframe
-top_n_database()
+create_database()
