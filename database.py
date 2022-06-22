@@ -58,7 +58,7 @@ headers = api_fetch()
 
 ## 3 ## Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
 
-def top_n_tracks():
+def top_n_tracks(n=5):
     """
     Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py and the corresponding features.
 
@@ -86,7 +86,7 @@ def top_n_tracks():
         artist_id = requests.get(artist_search_endpoint, headers=headers).json()['artists']['items'][0]['id']
         artist_top_tracks_endpoint = base_url + 'artists/' + artist_id + '/top-tracks?market=ES'
         track_info = requests.get(artist_top_tracks_endpoint, headers=headers).json()['tracks']
-        for i in range(len(track_info)):
+        for i in range(min(n, len(track_info))):
             track_ids.append(track_info[i]['id'])
             track_titles.append(track_info[i]['name'])
             artist_names.append(track_info[i]['artists'][0]['name'])
