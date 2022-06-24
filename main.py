@@ -1,26 +1,7 @@
-# Create csv of database
-# - Spotify API
-# - Output: pandas df or array with songs and their Spotify features
-# CHRIS
-
-## 1 ## Start with the output of the scrapper.py (a list of 49 artists)
-
-# scrapper_output = ['Purple Disco Machine', 'Claptone', 'Tensnake', 'Bellaire', 
-#                    'Tiger And Woods', 'Teenage Mutants', 'Crazy P', 'Drop Out Orchestra', 'Luke Solomon', 
-#                    'Hot Toddy', 'Art Of Tones', 'Teensnake', 'Horse Meat Disco', 'Made To Move', 
-#                    'Gavinco', 'Angelo Ferreri', 'Coeo', 'David Penn', 'Dimitri From Paris', 'Block & Crown', 
-#                    'Session Victim', 'Platinum Doug', 'Samishi', 'Leon Vynehall', 'Late Nite Tuff Guy', 'DeMarzo',
-#                    'Adryiano', 'Sidney Charles', 'Crazibiza', 'Rene Amesz', 'Black Loops',
-#                    'Lars Moston', 'Max Graef', 'Antonio Giacca', 'Nhan Solo', 'Superlover', 'JKriv',
-#                    'Kevin McKay', 'Robosonic', 'Harvey Sutherland', 'Antal', 'Dr Packer', 'Maceo Plex',
-#                    'The Cube Guys', 'Soundstream', 'Rockers Revenge', 'Fatnotronic', 'Mousse T', 
-#                    'Sonny Fodera']
-import main
-scrapper_output = main.artist_name
-
-## 2 ## Define function to get access tokens to Spotify API using credentials
-
 import requests
+#Import scrapper.py 
+from scrapper import Scrapper
+
 
 def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be89a80fa48c6b015f86b621514e3'):
     """
@@ -59,20 +40,21 @@ def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be
 
 ## 3 ## Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
 
-def top_n_tracks(n=5, scrapper_output = scrapper_output):
+def top_n_tracks(scrapper_output: list):
     """
     Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py and the corresponding features.
 
     Param:
     -----
-    - n: int. Any integer between 1 and 10. Default value is 5.    
+    - scrapper_output: list of artists output by the scapper    
 
     Output:
     ------
     - track_ids, track_titles, artist_names
     - danceability, energy, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
     """
-    n = 5
+   
+    
     # Call the function to save the header in a new variable
     headers = api_fetch()
 
@@ -90,7 +72,7 @@ def top_n_tracks(n=5, scrapper_output = scrapper_output):
         artist_id = requests.get(artist_search_endpoint, headers=headers).json()['artists']['items'][0]['id']
         artist_top_tracks_endpoint = base_url + 'artists/' + artist_id + '/top-tracks?market=ES'
         track_info = requests.get(artist_top_tracks_endpoint, headers=headers).json()['tracks']
-        print("n",type(n)," int(len(track_info)))", type(int(len(track_info))))
+        print("getting top tracks for: ", artist_name,"...")
         for i in range(min(5, int(len(track_info)))):
             track_ids.append(track_info[i]['id'])
             track_titles.append(track_info[i]['name'])
@@ -137,7 +119,7 @@ def top_n_tracks(n=5, scrapper_output = scrapper_output):
 # Importing pandas library
 import pandas as pd 
     
-def create_database(scrapper_output = scrapper_output):
+def create_database(scrapper_output: list):
     """
     Function that gets the features of the tracks in list form and returns a named dataframe.
 
@@ -169,5 +151,22 @@ def create_database(scrapper_output = scrapper_output):
     # Print dataframe
     return df 
 
-### Return the dataframe
-#create_database()
+def main(artist_name: str, save_csv: bool = False):
+
+    #Initiate the scrapper class
+    scrapper = Scrapper()
+
+    #Call the get_similar_artists function
+    scrapper_output = scrapper.get_similar_artists(artist_name= artist_name)
+
+    df = create_database(scrapper_output=scrapper_output)
+    
+    if save_csv == True:
+        df.to_csv(f'{artist_name}_based_playlist.csv')
+        return df
+    else:
+        return df
+    
+    
+
+main(artist_name = 'tame impala', save_csv = True )
