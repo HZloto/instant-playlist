@@ -1,9 +1,11 @@
 import requests
-#Import scrapper.py 
 from scrapper import Scrapper
+import pandas as pd
+from playlist_api import create_playlist
+import random
 
 
-def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be89a80fa48c6b015f86b621514e3'):
+def api_fetch(client_id: str ='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret: str ='d34be89a80fa48c6b015f86b621514e3') -> dict:
     """
     Function that accesses the various endpoints of the Spotify API by passing an access token from client credentials.
     
@@ -14,7 +16,7 @@ def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be
 
     Output:
     ------
-    - headers
+    - headers dictionnary 
     """ 
 
     # URL for token resource
@@ -37,19 +39,18 @@ def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be
     return headers
 
 
-
-## 3 ## Use the Spotify API (check SpotiPy library for help) to find their 5 most popular song for each artist
-
-def top_n_tracks(scrapper_output: list):
+def top_n_tracks(scrapper_output: list) -> pd.DataFrame:
     """
-    Function that scraps the API of Spotify to get the top N tracks of the artists scrapped in scrapper.py and the corresponding features.
-
+    Function that scraps the API of Spotify to get the top 5 tracks of the artists scrapped in scrapper.py and the corresponding features.
+    If the artist has less than 5 tracks on Spotify, it returns all of his discography.
+    
     Param:
     -----
     - scrapper_output: list of artists output by the scapper    
 
     Output:
     ------
+    Pandas DataFrame with:
     - track_ids, track_titles, artist_names
     - danceability, energy, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
     """
@@ -112,14 +113,8 @@ def top_n_tracks(scrapper_output: list):
            danceability, energy, loudness, mode, speechiness, acousticness, \
            instrumentalness, liveness, valence, tempo
 
-## 4 ## Create a df with these columns: song id, title, artist, and all features (['danceability', 'energy', 'loudness', 'mode', 'speechiness',
-#      'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) 
-#       The df should contain about 245 songs (49 artistsx5)
-
-# Importing pandas library
-import pandas as pd 
     
-def create_database(scrapper_output: list):
+def create_database(scrapper_output: list) -> pd.DataFrame:
     """
     Function that gets the features of the tracks in list form and returns a named dataframe.
 
@@ -151,7 +146,21 @@ def create_database(scrapper_output: list):
     # Print dataframe
     return df 
 
-def main(artist_name: str, save_csv: bool = False):
+
+def make_dataframe(artist_name: str, save_csv: bool = False) -> pd.DataFrame:
+    '''
+    For a given artist name, returns a dataframe with 245 tracks of similar artists.
+    
+    Params
+    ------
+    - artist name: name of the artist
+    - save_csv: Bool to pick if user wants a csv copy saved
+    
+    Output
+    ------
+    - Pandas Dataframe
+    
+    '''
 
     #Initiate the scrapper class
     scrapper = Scrapper()
@@ -168,5 +177,22 @@ def main(artist_name: str, save_csv: bool = False):
         return df
     
     
+    
+def list_sp_id(playlist_df):
+    list_sp = playlist_df['id'].tolist()
+    randindex = random.sample(list_sp, 100)
+    return randindex
 
-main(artist_name = 'tame impala', save_csv = True )
+    
+    
+    
+def pick_closest_songs():
+    pass
+
+
+
+
+playlist_df = make_dataframe(artist_name = 'bellaire', save_csv = True )
+song_list = list_sp_id(playlist_df=playlist_df)
+URL = create_playlist(songs_id_list=song_list)
+print(URL)
