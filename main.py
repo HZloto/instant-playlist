@@ -3,6 +3,7 @@ from scrapper import Scrapper
 import pandas as pd
 from playlist_api import create_playlist
 import random
+import time
 
 
 def api_fetch(client_id: str ='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret: str ='d34be89a80fa48c6b015f86b621514e3') -> dict:
@@ -89,12 +90,21 @@ def top_n_tracks(scrapper_output: list) -> pd.DataFrame:
     audio_features_endpoint = base_url + 'audio-features'
 
     # Create a loop and use the audio features endpoint to fetch the above features and append them to lists above
+    counter = 0
     for track_id in track_ids:
 
         # Get the GET Audio Features request
         track_info = requests.get(audio_features_endpoint, headers=headers, params={'ids': track_id}).json()
+        counter += 1 
+        if counter == 30:
+            time.sleep(1)
+            counter = 0 
+        else:
+            pass
+
 
         # Get the audio features subset
+        print(track_info)
         track_info_features = track_info['audio_features'][0]
 
         # Append the features' values
@@ -159,6 +169,7 @@ def make_dataframe(artist_name: str, save_csv: bool = False) -> pd.DataFrame:
     Output
     ------
     - Pandas Dataframe
+    - Artist name
     
     '''
 
@@ -191,8 +202,9 @@ def pick_closest_songs():
 
 
 
-
-playlist_df = make_dataframe(artist_name = 'bellaire', save_csv = False )
+artist_name  = 'matthieu faubourg'
+playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
 song_list = list_sp_id(playlist_df=playlist_df)
-URL = create_playlist(songs_id_list=song_list)
+playlist_name = f"Your {artist_name} inspired playlist"
+URL = create_playlist(songs_id_list=song_list, playlist_name=playlist_name)
 print(URL)

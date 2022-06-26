@@ -35,7 +35,7 @@ from spotipy.oauth2 import SpotifyOAuth
 
 
 songs_id_list = ['6Sq7ltF9Qa7SNFBsV5Cogx','3k3NWokhRRkEPhCzPmV8TW','77JW5yocR1NgteaKKLweQP']
-def create_playlist(songs_id_list):
+def create_playlist(songs_id_list,playlist_name):
     
     client_id = "f0affaf409354cc89102c9ff41044fe4"
     client_secret = "f61d4df574404456ace1ba73551ce432"
@@ -46,8 +46,8 @@ def create_playlist(songs_id_list):
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id, client_secret= client_secret, redirect_uri=redirect_uri, username = username, scope=scope))
 
     #Make the conection
-    playlist_name = 'IHXIUShfs'
-    spotifyObject=sp
+    playlist_name = str(playlist_name)
+    spotifyObject = sp
     
 
     #create playlist
@@ -62,4 +62,4 @@ def create_playlist(songs_id_list):
     spotifyObject.user_playlist_add_tracks (user=username, playlist_id=playlist, tracks=songs_id_list)
     return playlist_url
     
-create_playlist(songs_id_list=songs_id_list)
+#create_playlist(songs_id_list=songs_id_list)
