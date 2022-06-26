@@ -192,7 +192,7 @@ def pick_closest_songs():
 
 
 
-playlist_df = make_dataframe(artist_name = 'bellaire', save_csv = True )
+playlist_df = make_dataframe(artist_name = 'bellaire', save_csv = False )
 song_list = list_sp_id(playlist_df=playlist_df)
 URL = create_playlist(songs_id_list=song_list)
 print(URL)

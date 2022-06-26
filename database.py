@@ -22,7 +22,7 @@ scrapper_output = main.artist_name
 
 import requests
 
-def api_fetch(client_id='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret='d34be89a80fa48c6b015f86b621514e3'):
+def api_fetch(client_id='f0affaf409354cc89102c9ff41044fe4', client_secret='f61d4df574404456ace1ba73551ce432'):
     """
     Function that accesses the various endpoints of the Spotify API by passing an access token from client credentials.
     

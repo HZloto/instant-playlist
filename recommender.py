@@ -15,7 +15,7 @@ import requests
 
 
 
-def get_song_features(song_id: str, client_id: str = "069700c64b6d428088724522a691188c", client_secret: str = "3cb0e989241f47df8cc6f79a34f8ff8a") -> pd.DataFrame:
+def get_song_features(song_id: str, client_id: str = "f0affaf409354cc89102c9ff41044fe4", client_secret: str = "f61d4df574404456ace1ba73551ce432") -> pd.DataFrame:
     '''
     
     This fuction takes a song spotify ID and returns a pandas dataframe with its features
