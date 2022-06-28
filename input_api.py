@@ -43,31 +43,48 @@ def get_artist_top_track(artist_name):
 
     #Make the API call and store two results, top_track and top_traci_id
     top_track_json = requests.get(url2, headers = headers, params =params2).json()
-    top_track = top_track_json['tracks'][0]['name']
-    top_track_id = top_track_json['tracks'][0]['id']
+    top_track=[]
+    top_track_id=[]
+
+    for i in range(0,10):
+        top_track.append((i,top_track_json['tracks'][i]['name']))
+        top_track_id.append(top_track_json['tracks'][i]['id'])
+        
     return top_track, top_track_id
+if __name__ == "__main__":
+
+    a = get_artist_top_track('maluma')
+    a[0]
 
 def top_track_df():
     # We need the input from the user
-    artist_name = input('Write down your favorite artist')
+    
+    artist_name = input('Write down your favorite artist: ')
+    songs_list=get_artist_top_track(artist_name)[0]
+    print(songs_list)
+    favorite_song= input ('Write the number of your favorite song from the  list: ')
 
     top_track, top_track_id = get_artist_top_track(artist_name)
+    
 
     # REquest tokens to connect to API
     connect_instance = connection()
     headers = connect_instance.get_auth()
 
     #Prepare for API:
-    url = 'https://api.spotify.com/v1/audio-features/' + top_track_id
-    params = {"id": top_track_id}
+    url = 'https://api.spotify.com/v1/audio-features/' + top_track_id[int(favorite_song)]
+    params = {"id": top_track_id[int(favorite_song)]}
 
     #Call API
     features_json = requests.get(url, headers=headers, params=params).json()
 
     #Create Dataframe with song features
     df = pd.DataFrame(features_json, index = [0])
-    df['artist_name'] = artist_name
-    df['track_name'] = top_track
+    df['artist'] = artist_name
+    df['title'] = top_track[int(favorite_song)][1]
+    df=df[['id', 'title', 'artist', 'danceability', 'energy',
+       'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness',
+       'liveness', 'valence', 'tempo']]
     return df
 
 
