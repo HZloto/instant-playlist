@@ -97,7 +97,7 @@ def top_n_tracks(scrapper_output: list) -> pd.DataFrame:
         track_info = requests.get(audio_features_endpoint, headers=headers, params={'ids': track_id}).json()
         counter += 1 
         if counter == 30:
-            time.sleep(1)
+            time.sleep(0.5)
             counter = 0 
         else:
             pass
@@ -202,7 +202,7 @@ def pick_closest_songs():
 
 
 
-artist_name  = 'matthieu faubourg'
+artist_name  = 'muse'
 playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
 song_list = list_sp_id(playlist_df=playlist_df)
 playlist_name = f"Your {artist_name} inspired playlist"

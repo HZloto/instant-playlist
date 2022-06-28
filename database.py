@@ -72,7 +72,7 @@ def top_n_tracks(n=5, scrapper_output = scrapper_output):
     - track_ids, track_titles, artist_names
     - danceability, energy, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo
     """
-    n = 5
+    
     # Call the function to save the header in a new variable
     headers = api_fetch()
 
@@ -91,7 +91,7 @@ def top_n_tracks(n=5, scrapper_output = scrapper_output):
         artist_top_tracks_endpoint = base_url + 'artists/' + artist_id + '/top-tracks?market=ES'
         track_info = requests.get(artist_top_tracks_endpoint, headers=headers).json()['tracks']
         print("n",type(n)," int(len(track_info)))", type(int(len(track_info))))
-        for i in range(min(3, int(len(track_info)))):
+        for i in range(min(5, int(len(track_info)))):
             track_ids.append(track_info[i]['id'])
             track_titles.append(track_info[i]['name'])
             artist_names.append(track_info[i]['artists'][0]['name'])

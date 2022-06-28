@@ -34,7 +34,7 @@ from spotipy.oauth2 import SpotifyOAuth
 
 
 
-songs_id_list = ['6Sq7ltF9Qa7SNFBsV5Cogx','3k3NWokhRRkEPhCzPmV8TW','77JW5yocR1NgteaKKLweQP']
+#songs_id_list = ['6Sq7ltF9Qa7SNFBsV5Cogx','3k3NWokhRRkEPhCzPmV8TW','77JW5yocR1NgteaKKLweQP']
 def create_playlist(songs_id_list,playlist_name):
     
     client_id = "f0affaf409354cc89102c9ff41044fe4"

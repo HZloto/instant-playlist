@@ -12,6 +12,8 @@
 #IMPORTS
 import pandas as pd
 import requests
+import scipy
+import scipy.spatial
 
 
 
@@ -77,6 +79,6 @@ def get_target_df(df_target_path: str = 'temp_recommender.csv') -> pd.DataFrame:
 df_song_input = get_song_features(song_id = '2QuSUJTRJMzWssW9nXPGcf') # Id of the spotify target sound
 df_target = get_target_df(df_target_path = 'temp_recommender.csv')
 
-import scipy.spatial
+
 ary = scipy.spatial.distance.cdist(df_song_input.drop(columns=['id']), df_target.drop(columns=['id']), metric='euclidean')
 print(df_song_input[ary==ary.min()])
