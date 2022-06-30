@@ -2,6 +2,15 @@
 # - Spotify API
 # - Output: vector/list/array with all the song’s features
 # MARTIN
+# 1. Create a function that takes as an input the name of one artist
+# (We only ask for artist name for simplicity)
+
+# 2. Make a spotify API call (SpotiPy can help) to get the artist's most popular song
+
+# 3.return artist name as a string and best song as a df with the following features:
+# ['danceability', 'energy', 'loudness', 'mode', 'speechiness',
+#   'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
+
 import requests
 import pandas as pd
 
@@ -45,8 +54,9 @@ def get_artist_top_track(artist_name):
     top_track_json = requests.get(url2, headers = headers, params =params2).json()
     top_track=[]
     top_track_id=[]
+    num_of_songs=len(top_track_json['tracks'])
 
-    for i in range(0,10):
+    for i in range(0,num_of_songs):
         top_track.append((i,top_track_json['tracks'][i]['name']))
         top_track_id.append(top_track_json['tracks'][i]['id'])
         
@@ -88,14 +98,6 @@ def top_track_df():
     return df
 
 
-# 1. Create a function that takes as an input the name of one artist
-# (We only ask for artist name for simplicity)
-
-# 2. Make a spotify API call (SpotiPy can help) to get the artist's most popular song
-
-# 3.return artist name as a string and best song as a df with the following features:
-# ['danceability', 'energy', 'loudness', 'mode', 'speechiness',
-#   'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
 if __name__ == "__main__":
 
     a = top_track_df()
