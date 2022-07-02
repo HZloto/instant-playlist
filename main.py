@@ -2,8 +2,12 @@ import requests
 from scrapper import Scrapper
 import pandas as pd
 from playlist_api import create_playlist
+from input_api import top_track_df
 import random
 import time
+import pandas as pd
+import scipy
+import scipy.spatial
 
 
 def api_fetch(client_id: str ='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret: str ='d34be89a80fa48c6b015f86b621514e3') -> dict:
@@ -71,14 +75,20 @@ def top_n_tracks(scrapper_output: list) -> pd.DataFrame:
     # Create loop to get artist id and then get the top n tracks of the corresponding artist
     for artist_name in scrapper_output:
         artist_search_endpoint = base_url + 'search?q=' + artist_name.replace(' ', '%20') + '&type=artist'
-        artist_id = requests.get(artist_search_endpoint, headers=headers).json()['artists']['items'][0]['id']
-        artist_top_tracks_endpoint = base_url + 'artists/' + artist_id + '/top-tracks?market=ES'
-        track_info = requests.get(artist_top_tracks_endpoint, headers=headers).json()['tracks']
-        print("getting top tracks for: ", artist_name,"...")
-        for i in range(min(5, int(len(track_info)))):
-            track_ids.append(track_info[i]['id'])
-            track_titles.append(track_info[i]['name'])
-            artist_names.append(track_info[i]['artists'][0]['name'])
+        
+        try:
+            artist_id = requests.get(artist_search_endpoint, headers=headers).json()['artists']['items'][0]['id']
+            artist_top_tracks_endpoint = base_url + 'artists/' + artist_id + '/top-tracks?market=ES'
+            track_info = requests.get(artist_top_tracks_endpoint, headers=headers).json()['tracks']
+            print("getting top tracks for: ", artist_name,"...")
+            for i in range(min(5, int(len(track_info)))):
+                track_ids.append(track_info[i]['id'])
+                track_titles.append(track_info[i]['name'])
+                artist_names.append(track_info[i]['artists'][0]['name'])
+        except:
+            pass
+        
+        
 
     ### Get all other features of each track
 
@@ -197,14 +207,46 @@ def list_sp_id(playlist_df):
     
     
     
-def pick_closest_songs():
-    pass
+def pick_closest_songs(df_song_input, df_target):
+    #df_target = pd.read_csv('bellaire_based_playlist.csv')
+    art_list = list(set(df_target['artist']))
+    #df_song_input = pd.read_csv('dfonetrack.csv')
+
+    df_song_input = df_song_input[['id','danceability', 'energy', 'loudness', 'mode', 'speechiness',
+            'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']]
+
+    output_tracks_list = []
+
+    for i in art_list:
+        
+        temp_df = df_target[df_target['artist'] == str(i)]
+        
+        temp_df_1 = temp_df[['id','danceability', 'energy', 'loudness', 'mode', 'speechiness',
+        'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']]
+        ary = scipy.spatial.distance.cdist(df_song_input.drop(columns=['id']), temp_df_1.drop(columns=['id']), metric='euclidean')
+        ary = ary[0].tolist()
+        minimum = min(ary)
+        out_index = ary.index(minimum)
+        output_tracks_list.append(temp_df_1.iloc[out_index]['id'])
+    return output_tracks_list
+            
 
 
 
-artist_name  = 'muse'
-playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
-song_list = list_sp_id(playlist_df=playlist_df)
-playlist_name = f"Your {artist_name} inspired playlist"
-URL = create_playlist(songs_id_list=song_list, playlist_name=playlist_name)
-print(URL)
+def main():
+    #Give artist name
+    artist_name  = input("Enter Artist to base playlist on:  ")
+
+    playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
+    
+    song_list = pick_closest_songs(df_song_input = top_track_df(artist_name=artist_name), df_target=playlist_df)
+    
+    #song_list = list_sp_id(playlist_df=playlist_df)
+    
+    playlist_name = f"Your {artist_name} inspired playlist"
+    
+    URL = create_playlist(songs_id_list=song_list, playlist_name=playlist_name)
+    
+    print(URL)
+    
+main()

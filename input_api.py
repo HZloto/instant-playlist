@@ -61,15 +61,12 @@ def get_artist_top_track(artist_name):
         top_track_id.append(top_track_json['tracks'][i]['id'])
         
     return top_track, top_track_id
-if __name__ == "__main__":
 
-    a = get_artist_top_track('maluma')
-    a[0]
 
-def top_track_df():
+def top_track_df(artist_name = "bellaire"):
     # We need the input from the user
     
-    artist_name = input('Write down your favorite artist: ')
+    #artist_name = input('Write down your favorite artist: ')
     songs_list=get_artist_top_track(artist_name)[0]
     print(songs_list)
     favorite_song= input ('Write the number of your favorite song from the  list: ')
@@ -95,7 +92,7 @@ def top_track_df():
     df=df[['id', 'title', 'artist', 'danceability', 'energy',
        'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness',
        'liveness', 'valence', 'tempo']]
-    print(df)
+
     return df
 
 
