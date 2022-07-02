@@ -85,6 +85,7 @@ def top_track_df():
     df=df[['id', 'title', 'artist', 'danceability', 'energy',
        'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness',
        'liveness', 'valence', 'tempo']]
+    print(df)
     return df
 
 
