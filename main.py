@@ -3,10 +3,10 @@ from scrapper import Scrapper
 import pandas as pd
 from playlist_api import create_playlist
 from input_api import top_track_df
+from recommender import pick_closest_songs
 import random
 import time
 import pandas as pd
-import scipy
 import scipy.spatial
 
 
@@ -204,31 +204,6 @@ def list_sp_id(playlist_df):
     randindex = random.sample(list_sp, 100)
     return randindex
 
-    
-    
-    
-def pick_closest_songs(df_song_input, df_target):
-    #df_target = pd.read_csv('bellaire_based_playlist.csv')
-    art_list = list(set(df_target['artist']))
-    #df_song_input = pd.read_csv('dfonetrack.csv')
-
-    df_song_input = df_song_input[['id','danceability', 'energy', 'loudness', 'mode', 'speechiness',
-            'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']]
-
-    output_tracks_list = []
-
-    for i in art_list:
-        
-        temp_df = df_target[df_target['artist'] == str(i)]
-        
-        temp_df_1 = temp_df[['id','danceability', 'energy', 'loudness', 'mode', 'speechiness',
-        'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']]
-        ary = scipy.spatial.distance.cdist(df_song_input.drop(columns=['id']), temp_df_1.drop(columns=['id']), metric='euclidean')
-        ary = ary[0].tolist()
-        minimum = min(ary)
-        out_index = ary.index(minimum)
-        output_tracks_list.append(temp_df_1.iloc[out_index]['id'])
-    return output_tracks_list
             
 
 
@@ -237,16 +212,21 @@ def main():
     #Give artist name
     artist_name  = input("Enter Artist to base playlist on:  ")
 
+    #Return a dataframe with 245 tracks of similar artists
     playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
     
+    #Use euclidian distance to find the closest song to the one we picked
     song_list = pick_closest_songs(df_song_input = top_track_df(artist_name=artist_name), df_target=playlist_df)
     
-    #song_list = list_sp_id(playlist_df=playlist_df)
-    
+    #Generate playlist name
     playlist_name = f"Your {artist_name} inspired playlist"
     
+    #Generate URL
     URL = create_playlist(songs_id_list=song_list, playlist_name=playlist_name)
     
+    #Return the URL
     print(URL)
+    
+    return URL 
     
 main()
