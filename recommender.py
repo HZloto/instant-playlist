@@ -1,84 +1,52 @@
-# Recommender to find similar songs:
-# - Some library (not sure yet, autoencoders?) 
-# - Compare song output with our database csv
-# - Output: List of top 10 songs in terms of similarities (define how we value similarity)
-# HUGO
-#Random text
-
-# 1. give spotify song id
-# 2. give a csv
-# 3. return the 10 closest songs
-
-#IMPORTS
 import pandas as pd
-import requests
 import scipy
 import scipy.spatial
 
+def pick_closest_songs(df_song_input: pd.DataFrame, df_target: pd.DataFrame) -> list:
+    '''
+    This function picks the closest song to an input song for evey artist in a dataframe using spotify analysis
+    
+    Param:
+    -----
+    - df_song_input: a pandas dataframe with one row
+    - df_target: a pandas dataframe with many songs from different artists 
 
-
-def get_song_features(song_id: str, client_id: str = "f0affaf409354cc89102c9ff41044fe4", client_secret: str = "f61d4df574404456ace1ba73551ce432") -> pd.DataFrame:
+    Output:
+    ------
+    - List of spotify track ids 
+    
     '''
     
-    This fuction takes a song spotify ID and returns a pandas dataframe with its features
+    #Create list of all individual artists in the target df
+    art_list = list(set(df_target['artist']))
     
-    '''
+    #Only keep numerical variables
+    df_song_input = df_song_input[['id','danceability', 'energy', 'loudness', 'mode', 'speechiness',
+            'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']]
 
+    #Initialize empty output list
+    output_tracks_list = []
 
-    # URL for token resource
-    auth_url = 'https://accounts.spotify.com/api/token'
-
-    # request body
-    params = {'grant_type': 'client_credentials',
-            'client_id': client_id,
-            'client_secret': client_secret}
-
-    # POST the request
-    auth_response = requests.post(auth_url, params).json()
-    
-    # Retreive token
-    access_token = auth_response['access_token']
-    access_token 
-
-    #headers
-    headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
-
-    #URL
-    base_url = 'https://api.spotify.com/v1/'
-
-    # audio features endpoint
-    endpoint = "audio-features"
-    audio_features_endpoint = base_url + endpoint
-    audio_features_endpoint
-
-    #params
-    params = {"ids" : song_id} 
-
-    url = audio_features_endpoint
-    song_attributes = requests.get(url, headers = headers , params = params).json()
-
-    df_song_input = pd.DataFrame(song_attributes["audio_features"])
-    df_song_input = df_song_input[['danceability', 'energy', 'loudness', 'mode', 'speechiness',
-       'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo','id']]
-    return df_song_input
-
-def get_target_df(df_target_path: str = 'temp_recommender.csv') -> pd.DataFrame:
-    '''
-    
-    This fuction takes the csv path of a list of spotify song features and returns a pandas dataframe.
-    
-    '''
-
-    df_target = pd.read_csv(df_target_path)
-    df_target = df_target[['danceability', 'energy', 'loudness', 'mode', 'speechiness',
-        'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo','track_id']]
-    df_target = df_target.rename(columns={'track_id':'id'})
-    return df_target
-
-
-df_song_input = get_song_features(song_id = '2QuSUJTRJMzWssW9nXPGcf') # Id of the spotify target sound
-df_target = get_target_df(df_target_path = 'temp_recommender.csv')
-
-
-ary = scipy.spatial.distance.cdist(df_song_input.drop(columns=['id']), df_target.drop(columns=['id']), metric='euclidean')
-print(df_song_input[ary==ary.min()])
+    for i in art_list:
+        
+        #We iterate artist by artist, creating a df for each with only their songs
+        temp_df = df_target[df_target['artist'] == str(i)]
+        
+        #Only keep numerical variables
+        temp_df_1 = temp_df[['id','danceability', 'energy', 'loudness', 'mode', 'speechiness',
+        'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']]
+        
+        #use spacial distance to identify closest song to our input
+        ary = scipy.spatial.distance.cdist(df_song_input.drop(columns=['id']), temp_df_1.drop(columns=['id']), metric='euclidean')
+        ary = ary[0].tolist()
+        
+        #Find the minimum value (closest)
+        minimum = min(ary)
+        
+        #Get the index position of the closest song
+        out_index = ary.index(minimum)
+        
+        #append ID of closest song to our output list
+        output_tracks_list.append(temp_df_1.iloc[out_index]['id'])
+        
+    return output_tracks_list
