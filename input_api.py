@@ -55,7 +55,16 @@ def top_track_df(artist_name = "bellaire"):
     
     #artist_name = input('Write down your favorite artist: ')
     songs_list=get_artist_top_track(artist_name)[0]
+    print("")
+    print("")
+    print("")
+    print("")
+    print("---------------------------------------------------------")
     print(songs_list)
+    print("---------------------------------------------------------")
+    print("")
+    print("")
+    
     favorite_song= input ('To make the playlist more accurate, please write the number of your favorite song from the  list: ')
 
     top_track, top_track_id = get_artist_top_track(artist_name)

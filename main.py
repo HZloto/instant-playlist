@@ -88,8 +88,6 @@ def top_n_tracks(scrapper_output: list) -> pd.DataFrame:
         except:
             pass
         
-        
-
     ### Get all other features of each track
 
     # Initialize the lists
@@ -111,7 +109,6 @@ def top_n_tracks(scrapper_output: list) -> pd.DataFrame:
             counter = 0 
         else:
             pass
-
 
         # Get the audio features subset
         print(track_info)
@@ -211,7 +208,7 @@ def list_sp_id(playlist_df):
 def main():
     #Give artist name
     artist_name  = input("Enter Artist to base playlist on:  ")
-
+    
     #Return a dataframe with 245 tracks of similar artists
     playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
     
