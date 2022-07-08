@@ -1,5 +1,5 @@
 import requests
-import pandas as pd
+import pandas as pd 
 
 class connection():
     def __init__(self) -> None:
@@ -50,22 +50,17 @@ def get_artist_top_track(artist_name):
     return top_track, top_track_id
 
 
-def top_track_df(artist_name = "bellaire"):
+def top_track_df_1(artist_name = "bellaire"):
     # We need the input from the user
     
     #artist_name = input('Write down your favorite artist: ')
     songs_list=get_artist_top_track(artist_name)[0]
-    print("")
-    print("")
-    print("")
-    print("")
-    print("---------------------------------------------------------")
-    print(songs_list)
-    print("---------------------------------------------------------")
-    print("")
-    print("")
-    
-    favorite_song= input ('To make the playlist more accurate, please write the number of your favorite song from the  list: ')
+  
+    return(songs_list)
+ 
+def top_track_df_2(artist_name, favorite_song):
+       
+    #favorite_song= input ('To make the playlist more accurate, please write the number of your favorite song from the  list: ')
 
     top_track, top_track_id = get_artist_top_track(artist_name)
     
