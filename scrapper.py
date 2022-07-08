@@ -58,5 +58,7 @@ class Scrapper:
         similar_artists = []
         for i in range(len(res)):
             similar_artists.append(res[i]['_value'])
+            
+        similar_artists = similar_artists[0:5]
         
         return similar_artists
