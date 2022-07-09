@@ -55,7 +55,7 @@ An open source playlist recommender system for spotify based on the user input o
 <br />
 
 <a  href="https://hzloto-instant-playlist-visual-interface-sn7nag.streamlitapp.com/">View Demo</a>
-Note: Server is live but stateless. To use the app, please run streamlit on your local machine
+_Note: Server is live but stateless. To use the app, please run streamlit on your local machine
 
 ·
 
@@ -74,7 +74,6 @@ Note: Server is live but stateless. To use the app, please run streamlit on your
 
 <!-- TABLE OF CONTENTS -->
 
-<details>
 
 <h3>Table of Contents</h3>
 
@@ -119,8 +118,6 @@ Note: Server is live but stateless. To use the app, please run streamlit on your
 <li><a  href="#acknowledgments">Acknowledgments</a></li>
 
 </ol>
-
-</details>
 
   
   

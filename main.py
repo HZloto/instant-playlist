@@ -1,13 +1,9 @@
 import requests
 from scrapper import Scrapper
 import pandas as pd
-from playlist_api import create_playlist
-from input_api import top_track_df_1, top_track_df_2
-from recommender import pick_closest_songs
 import random
 import time
 import pandas as pd
-import scipy.spatial
 
 
 def api_fetch(client_id: str ='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret: str ='d34be89a80fa48c6b015f86b621514e3') -> dict:
@@ -192,42 +188,5 @@ def make_dataframe(artist_name: str, save_csv: bool = False) -> pd.DataFrame:
         df.to_csv(f'{artist_name}_based_playlist.csv')
         return df
     else:
-        return df
+        return df    
     
-    
-    
-def list_sp_id(playlist_df):
-    list_sp = playlist_df['id'].tolist()
-    randindex = random.sample(list_sp, 100)
-    return randindex
-
-            
-
-
-
-# def main():
-#     #Give artist name
-#     #artist_name  = input("Enter Artist to base playlist on:  ")
-
-#     #Return a dataframe with 245 tracks of similar artists
-#     playlist_df = make_dataframe(artist_name = artist_name, save_csv = False )
-
-#     #Get the list of songs from the same artist
-#     top_track_df_1(artist_name)
-#     tracknumber = input("track number?")
-
-#     #Use euclidian distance to find the closest song to the one we picked
-#     song_list = pick_closest_songs(df_song_input = top_track_df_2(artist_name, tracknumber), df_target=playlist_df)
-
-#     #Generate playlist name
-#     playlist_name = f"Your {artist_name} inspired playlist"
-
-#     #Generate URL
-#     URL = create_playlist(songs_id_list=song_list, playlist_name=playlist_name)
-
-#     #Return the URL
-#     print(URL)
-
-#     return URL 
-
-# main()
