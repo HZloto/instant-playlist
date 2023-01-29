@@ -6,7 +6,7 @@ import time
 import pandas as pd
 
 
-def api_fetch(client_id: str ='e665d5d853914ec2a5fa7a45fcf41b8c', client_secret: str ='d34be89a80fa48c6b015f86b621514e3') -> dict:
+def api_fetch(client_id: str ='CLIENT_ID', client_secret: str ='CLIENT_SECRET') -> dict:
     """
     Function that accesses the various endpoints of the Spotify API by passing an access token from client credentials.
     
